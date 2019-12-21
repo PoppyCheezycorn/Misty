@@ -1,0 +1,14 @@
+<configuration debug="false">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>%magenta([) %boldYellow(%d{HH:mm:ss}) %magenta(%-5level]) %boldBlue([%t]) %boldYellow([%logger{0}]) %boldMagenta(->) %yellow(%msg) %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
