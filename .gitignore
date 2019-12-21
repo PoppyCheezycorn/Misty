@@ -2,8 +2,8 @@
 *.idea
 
 # Gradle
-*.gradle
-build
+/.gradle
+/build/*
 
 # Misty
 *config.json
