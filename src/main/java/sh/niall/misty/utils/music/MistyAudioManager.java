@@ -1,5 +1,6 @@
 package sh.niall.misty.utils.music;
 
+import com.mongodb.client.MongoCollection;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -12,6 +13,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.bson.Document;
+import sh.niall.misty.Misty;
 import sh.niall.misty.utils.errors.PermissionError;
 import sh.niall.misty.utils.errors.VoiceError;
 import sh.niall.yui.commands.commands.Context;
@@ -27,12 +30,14 @@ public class MistyAudioManager {
     private HashMap<String, AudioGuild> audioGuilds;
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     final static Pattern URL_PATTERN = Pattern.compile("\\s*(https?|attachment)://\\S+\\s*", Pattern.CASE_INSENSITIVE);
+    MongoCollection<Document> mongoCollection;
 
     public MistyAudioManager() {
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerLocalSource(this.audioPlayerManager);
         AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);
         this.audioGuilds = new HashMap<>();
+        this.mongoCollection = Misty.database.getCollection("audio");
     }
 
     /**
@@ -41,7 +46,7 @@ public class MistyAudioManager {
     public synchronized AudioGuild getAudioGuild(Guild guild) {
         AudioGuild audioGuild = audioGuilds.get(guild.getId());
         if (audioGuild == null) {
-            audioGuild = new AudioGuild(audioPlayerManager);
+            audioGuild = new AudioGuild(mongoCollection, guild, audioPlayerManager);
             audioGuilds.put(guild.getId(), audioGuild);
         }
 

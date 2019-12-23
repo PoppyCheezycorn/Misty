@@ -9,6 +9,7 @@ import sh.niall.misty.cogs.MusicCog;
 import sh.niall.misty.cogs.UtilitiesCog;
 import sh.niall.misty.utils.config.Config;
 import sh.niall.misty.utils.config.ConfigLoader;
+import sh.niall.misty.utils.database.Database;
 import sh.niall.yui.commands.Yui;
 import sh.niall.yui.commands.prefixes.PrefixManager;
 
@@ -18,11 +19,13 @@ import java.io.FileNotFoundException;
 public class Misty {
 
     public static Config config;
+    public static Database database;
 
 
     public static void main(String[] args) throws LoginException, FileNotFoundException {
         // Initialize globals
         config = ConfigLoader.loadConfig();
+        database = new Database();
 
         // Generate JDA Builder
         JDABuilder builder = new JDABuilder(config.getDiscordToken());

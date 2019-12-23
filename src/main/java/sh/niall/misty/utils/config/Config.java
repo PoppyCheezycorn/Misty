@@ -5,11 +5,13 @@ public class Config {
     String discordErrorImage;
     String discordToken;
 
-    public String getDiscordErrorImage() {
-        return discordErrorImage;
-    }
+    String mongoURL;
+
+    public String getDiscordErrorImage() { return discordErrorImage; }
 
     public String getDiscordToken() {
         return discordToken;
     }
+
+    public String getMongoURL() { return mongoURL; }
 }
