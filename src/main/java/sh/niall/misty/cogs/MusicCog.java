@@ -22,7 +22,11 @@ import java.util.concurrent.TimeUnit;
 
 public class MusicCog extends Cog {
 
-    MistyAudioManager audioManager = new MistyAudioManager();
+    MistyAudioManager audioManager;
+
+    public MusicCog(MistyAudioManager audioManager) {
+        this.audioManager = audioManager;
+    }
 
     /**
      * Connects Misty to the invokers voice channel

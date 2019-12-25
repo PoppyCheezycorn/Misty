@@ -7,10 +7,12 @@ import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.LoggerFactory;
 import sh.niall.misty.cogs.FunCog;
 import sh.niall.misty.cogs.MusicCog;
+import sh.niall.misty.cogs.RadioCog;
 import sh.niall.misty.cogs.UtilitiesCog;
 import sh.niall.misty.utils.config.Config;
 import sh.niall.misty.utils.config.ConfigLoader;
 import sh.niall.misty.utils.database.Database;
+import sh.niall.misty.utils.music.MistyAudioManager;
 import sh.niall.yui.commands.Yui;
 import sh.niall.yui.commands.prefixes.PrefixManager;
 
@@ -33,12 +35,16 @@ public class Misty {
         builder.setAudioSendFactory(new NativeAudioSendFactory());
         builder.setActivity(Activity.watching("Anime"));
 
+        // Create the audio manager
+        MistyAudioManager audioManager = new MistyAudioManager();
+
         // Setup Yui
         PrefixManager prefixManager = new PrefixManager(config.getDiscordPrefixes());
         Yui yui = new Yui(builder, prefixManager);
         yui.registerCogs(
                 new FunCog(),
-                new MusicCog(),
+                new MusicCog(audioManager),
+                new RadioCog(audioManager),
                 new UtilitiesCog()
         );
 
