@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.LoggerFactory;
+import sh.niall.misty.cogs.FunCog;
 import sh.niall.misty.cogs.MusicCog;
 import sh.niall.misty.cogs.UtilitiesCog;
 import sh.niall.misty.utils.config.Config;
@@ -33,9 +34,10 @@ public class Misty {
         builder.setActivity(Activity.watching("Anime"));
 
         // Setup Yui
-        PrefixManager prefixManager = new PrefixManager("?");
+        PrefixManager prefixManager = new PrefixManager(config.getDiscordPrefixes());
         Yui yui = new Yui(builder, prefixManager);
         yui.registerCogs(
+                new FunCog(),
                 new MusicCog(),
                 new UtilitiesCog()
         );

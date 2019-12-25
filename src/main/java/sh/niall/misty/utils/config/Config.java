@@ -1,9 +1,12 @@
 package sh.niall.misty.utils.config;
 
+import java.util.List;
+
 public class Config {
 
     String discordErrorImage;
     String discordToken;
+    List<String> discordPrefixes;
 
     String mongoURL;
 
@@ -14,4 +17,6 @@ public class Config {
     }
 
     public String getMongoURL() { return mongoURL; }
+
+    public List<String> getDiscordPrefixes() { return discordPrefixes; }
 }
