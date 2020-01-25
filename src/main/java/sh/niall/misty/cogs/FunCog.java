@@ -4,10 +4,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import sh.niall.yui.commands.cogs.Cog;
-import sh.niall.yui.commands.commands.Context;
-import sh.niall.yui.commands.errors.CommandError;
+
+import sh.niall.yui.cogs.Cog;
+import sh.niall.yui.commands.Context;
 import sh.niall.yui.commands.interfaces.Command;
+import sh.niall.yui.exceptions.CommandException;
 
 import java.awt.*;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class FunCog extends Cog {
     OkHttpClient client = new OkHttpClient();
 
     @Command(name = "dog", aliases = {"puppo", "puppos"})
-    public void commandDog(Context context) throws IOException, CommandError {
+    public void commandDog(Context context) throws IOException, CommandException {
         // We're doing a request, so send a typing message
         context.getChannel().sendTyping().queue();
 
@@ -27,7 +28,7 @@ public class FunCog extends Cog {
         // Ensure we got through
         if (resourceRequest.code() != 200) {
             resourceRequest.close();
-            throw new CommandError("There were no available dogs to photograph!");
+            throw new CommandException("There were no available dogs to photograph!");
         }
 
         // Locate the dog!
@@ -39,7 +40,7 @@ public class FunCog extends Cog {
         if (dogRequest.code() != 200) {
             resourceRequest.close();
             dogRequest.close();
-            throw new CommandError("We found you a dog, but they were a little too shy to see you :(");
+            throw new CommandException("We found you a dog, but they were a little too shy to see you :(");
         }
 
         // Videos can't be embed, so we have to upload them differently

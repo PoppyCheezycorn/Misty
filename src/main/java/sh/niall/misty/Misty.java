@@ -9,9 +9,12 @@ import sh.niall.misty.cogs.*;
 import sh.niall.misty.utils.config.Config;
 import sh.niall.misty.utils.config.ConfigLoader;
 import sh.niall.misty.utils.database.Database;
+import sh.niall.misty.utils.errors.MistyErrorHandler;
 import sh.niall.misty.utils.music.MistyAudioManager;
-import sh.niall.yui.commands.Yui;
-import sh.niall.yui.commands.prefixes.PrefixManager;
+import sh.niall.yui.Yui;
+import sh.niall.yui.exceptions.PrefixException;
+import sh.niall.yui.prefix.PrefixManager;
+
 
 import javax.security.auth.login.LoginException;
 import java.io.FileNotFoundException;
@@ -22,7 +25,7 @@ public class Misty {
     public static Database database;
 
 
-    public static void main(String[] args) throws LoginException, FileNotFoundException {
+    public static void main(String[] args) throws LoginException, FileNotFoundException, PrefixException {
         // Initialize globals
         config = ConfigLoader.loadConfig();
         database = new Database();
@@ -37,17 +40,16 @@ public class Misty {
 
         // Setup Yui
         PrefixManager prefixManager = new PrefixManager(config.getDiscordPrefixes());
-        Yui yui = new Yui(builder, prefixManager);
-        yui.registerCogs(
+        Yui yui = new Yui(builder, prefixManager, new MistyErrorHandler());
+        yui.addCogs(
                 new HelpCog(),
                 new FunCog(),
                 new MusicCog(audioManager),
-                new RadioCog(audioManager),
                 new UtilitiesCog()
         );
 
         // Build JDA
-        JDA jda = builder.build();
+        builder.build();
         LoggerFactory.getLogger(Misty.class).info("I'm online and ready to go!");
     }
 

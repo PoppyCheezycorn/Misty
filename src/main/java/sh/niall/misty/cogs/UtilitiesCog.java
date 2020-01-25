@@ -1,12 +1,12 @@
 package sh.niall.misty.cogs;
 
 import net.dv8tion.jda.api.entities.User;
+import sh.niall.misty.utils.errors.ArgumentError;
 import sh.niall.misty.utils.presets.ErrorPreset;
-import sh.niall.yui.commands.cogs.Cog;
-import sh.niall.yui.commands.commands.Context;
-import sh.niall.yui.commands.errors.ArgumentError;
-import sh.niall.yui.commands.errors.CommandError;
+import sh.niall.yui.cogs.Cog;
+import sh.niall.yui.commands.Context;
 import sh.niall.yui.commands.interfaces.Command;
+import sh.niall.yui.exceptions.CommandException;
 
 public class UtilitiesCog extends Cog {
 
@@ -38,7 +38,7 @@ public class UtilitiesCog extends Cog {
      * Sends the screen share link if the user is in a voice channel
      */
     @Command(name = "screenshare", aliases = {"ss"})
-    public void _commandScreenshare(Context ctx) throws CommandError {
+    public void _commandScreenshare(Context ctx) throws CommandException {
         try {
             ctx.send(String.format(
                     "Here is the screenshare link for %s:\n<https://discordapp.com/channels/%s/%s>",
@@ -47,12 +47,7 @@ public class UtilitiesCog extends Cog {
                     ctx.getAuthor().getVoiceState().getChannel().getId()
             ));
         } catch (NullPointerException error) {
-            throw new CommandError("You're not currently in a voice channel, so I can't send a link.");
+            throw new CommandException("You're not currently in a voice channel, so I can't send a link.");
         }
-    }
-
-    @Override
-    public void onError(Context context, Exception error) {
-        ErrorPreset.onError(context, error);
     }
 }

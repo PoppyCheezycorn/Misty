@@ -1,33 +1,30 @@
-package sh.niall.misty.utils.presets;
+package sh.niall.misty.utils.errors;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import sh.niall.misty.Misty;
-import sh.niall.yui.commands.commands.Context;
-import sh.niall.yui.commands.errors.YuiError;
+import sh.niall.yui.cogs.ErrorHandler;
+import sh.niall.yui.commands.Context;
+import sh.niall.yui.exceptions.YuiException;
 
 import java.awt.*;
 import java.time.LocalDateTime;
 
-public class ErrorPreset {
+public class MistyErrorHandler extends ErrorHandler {
 
-    /**
-     * Is called whenever there is an error
-     * @param context The context of the error
-     * @param error The actual exception
-     */
-    public static void onError(Context context, Exception error) {
+    @Override
+    public void onError(Context ctx, Exception error) {
         EmbedBuilder embedBuilder = generateBaseEmbed();
-        embedBuilder.setAuthor(context.getAuthor().getEffectiveName(), null, context.getUser().getEffectiveAvatarUrl());
+        embedBuilder.setAuthor(ctx.getAuthor().getEffectiveName(), null, ctx.getUser().getEffectiveAvatarUrl());
 
 
-        if (error instanceof YuiError) {
+        if (error instanceof YuiException) {
             embedBuilder.addField("Information:", error.getMessage(), false);
-            context.send(embedBuilder.build());
+            ctx.send(embedBuilder.build());
             return;
         }
 
         embedBuilder.addField("Bot Error", "I don't know how to handle this error! Please inform my developer!", false);
-        context.send(embedBuilder.build());
+        ctx.send(embedBuilder.build());
     }
 
     private static EmbedBuilder generateBaseEmbed() {
@@ -39,5 +36,4 @@ public class ErrorPreset {
         embedBuilder.setTimestamp(LocalDateTime.now());
         return embedBuilder;
     }
-
 }

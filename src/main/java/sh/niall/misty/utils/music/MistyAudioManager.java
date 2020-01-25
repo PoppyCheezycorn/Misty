@@ -17,7 +17,7 @@ import org.bson.Document;
 import sh.niall.misty.Misty;
 import sh.niall.misty.utils.errors.PermissionError;
 import sh.niall.misty.utils.errors.VoiceError;
-import sh.niall.yui.commands.commands.Context;
+import sh.niall.yui.commands.Context;
 
 import java.util.HashMap;
 import java.util.concurrent.Executors;

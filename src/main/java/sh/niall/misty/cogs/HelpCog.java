@@ -1,9 +1,9 @@
 package sh.niall.misty.cogs;
 
+import sh.niall.misty.utils.errors.ArgumentError;
 import sh.niall.misty.utils.presets.ErrorPreset;
-import sh.niall.yui.commands.cogs.Cog;
-import sh.niall.yui.commands.commands.Context;
-import sh.niall.yui.commands.errors.ArgumentError;
+import sh.niall.yui.cogs.Cog;
+import sh.niall.yui.commands.Context;
 import sh.niall.yui.commands.interfaces.Command;
 
 public class HelpCog extends Cog {
@@ -82,10 +82,5 @@ public class HelpCog extends Cog {
                 + "avatar [ID or @] -- Get the specified users avatar.\n"
                 + "screenshare -- Gets the link for the screenshare page.\n"
                 + "```\n";
-    }
-
-    @Override
-    public void onError(Context context, Exception error) {
-        ErrorPreset.onError(context, error);
     }
 }

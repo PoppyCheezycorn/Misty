@@ -6,15 +6,15 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import org.apache.commons.lang3.StringUtils;
+import sh.niall.misty.utils.errors.ArgumentError;
+import sh.niall.misty.utils.errors.PermissionError;
 import sh.niall.misty.utils.errors.VoiceError;
 import sh.niall.misty.utils.music.AudioGuild;
 import sh.niall.misty.utils.music.MistyAudioManager;
-import sh.niall.misty.utils.presets.ErrorPreset;
-import sh.niall.yui.commands.cogs.Cog;
-import sh.niall.yui.commands.commands.Context;
-import sh.niall.yui.commands.errors.ArgumentError;
-import sh.niall.yui.commands.errors.CommandError;
+import sh.niall.yui.cogs.Cog;
+import sh.niall.yui.commands.Context;
 import sh.niall.yui.commands.interfaces.Command;
+import sh.niall.yui.exceptions.CommandException;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -32,10 +32,10 @@ public class MusicCog extends Cog {
      * Connects Misty to the invokers voice channel
      */
     @Command(name = "connect", aliases = {"summon", "join", "move"})
-    public void commandConnect(Context context) throws CommandError, InterruptedException, VoiceError {
+    public void commandConnect(Context context) throws CommandException, InterruptedException, VoiceError, PermissionError {
         // Firstly check to see if the user is in a voice channel
         if (!audioManager.userInVoice(context.getAuthor()))
-            throw new CommandError("I can't join a voice channel because you're not in one.");
+            throw new CommandException("I can't join a voice channel because you're not in one.");
 
         // Check if the bot is in the same channel as the user
         if (audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
@@ -59,7 +59,7 @@ public class MusicCog extends Cog {
      * Queues a song (URL) and tells the player to play.
      */
     @Command(name = "play", aliases = {"p", "queue"})
-    public void commandPlay(Context context) throws CommandError, ArgumentError, InterruptedException, VoiceError {
+    public void commandPlay(Context context) throws CommandException, ArgumentError, InterruptedException, VoiceError {
         // First check they provided an argument
         if (context.getArgs().size() == 1)
             throw new ArgumentError("Please provide a song URL to play.");
@@ -71,7 +71,7 @@ public class MusicCog extends Cog {
 
         // Check to see if the user is in a voice channel
         if (!audioManager.userInVoice(context.getAuthor()))
-            throw new CommandError("I can't play your song because you're not in a voice channel!");
+            throw new CommandException("I can't play your song because you're not in a voice channel!");
 
         // Make sure the bot is in a channel
         if (!context.getGuild().getAudioManager().isConnected())
@@ -79,7 +79,7 @@ public class MusicCog extends Cog {
 
         // See if the user is in the same channel as the bot
         if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
-            throw new CommandError("I can't play your song because you're not in the same voice channel as me.");
+            throw new CommandException("I can't play your song because you're not in the same voice channel as me.");
 
         // Update the text channel
         audioManager.getAudioGuild(context.getGuild()).setTextChannelID(context.getChannel().getId());
@@ -92,18 +92,18 @@ public class MusicCog extends Cog {
      * Pauses the playback of music
      */
     @Command(name = "pause")
-    public void commandPause(Context context) throws CommandError {
+    public void commandPause(Context context) throws CommandException {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandError("I can't pause because I'm not in a voice channel!");
+            throw new CommandException("I can't pause because I'm not in a voice channel!");
 
         // Next check the user is in the same channel
         if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
-            throw new CommandError("I can't pause because you're not in the same voice channel as me.");
+            throw new CommandException("I can't pause because you're not in the same voice channel as me.");
 
         // Make sure the bot is already playing
         if (audioManager.getAudioGuild(context.getGuild()).player.isPaused())
-            throw new CommandError("I'm already paused!");
+            throw new CommandException("I'm already paused!");
 
         // Pause the music
         audioManager.getAudioGuild(context.getGuild()).pause();
@@ -119,18 +119,18 @@ public class MusicCog extends Cog {
      * Resumes the playback of music
      */
     @Command(name = "resume")
-    public void commandResume(Context context) throws CommandError {
+    public void commandResume(Context context) throws CommandException {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandError("I can't resume because I'm not in a voice channel!");
+            throw new CommandException("I can't resume because I'm not in a voice channel!");
 
         // Next check the user is in the same channel
         if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
-            throw new CommandError("I can't resume because you're not in the same voice channel as me.");
+            throw new CommandException("I can't resume because you're not in the same voice channel as me.");
 
         // Make sure the bot is paused
         if (!audioManager.getAudioGuild(context.getGuild()).player.isPaused())
-            throw new CommandError("I'm not currently paused.");
+            throw new CommandException("I'm not currently paused.");
 
         // Resume the music
         audioManager.getAudioGuild(context.getGuild()).resume();
@@ -146,10 +146,10 @@ public class MusicCog extends Cog {
      * Stops playback of the current song and disconnects the bot
      */
     @Command(name = "stop", aliases = {"leave"})
-    public void commandStop(Context context) throws CommandError {
+    public void commandStop(Context context) throws CommandException {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandError("I'm not currently in a voice channel!");
+            throw new CommandException("I'm not currently in a voice channel!");
 
         // Make the Bot leave
         audioManager.destoryAudioGuild(context.getGuild());
@@ -162,22 +162,22 @@ public class MusicCog extends Cog {
      * Skips the current song
      */
     @Command(name = "skip", aliases = {"s"})
-    public void commandSkip(Context context) throws CommandError {
+    public void commandSkip(Context context) throws CommandException {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandError("I can't skip a song because I'm not currently in a voice channel!");
+            throw new CommandException("I can't skip a song because I'm not currently in a voice channel!");
 
         // Check to see if the user is in a voice channel
         if (!audioManager.userInVoice(context.getAuthor()))
-            throw new CommandError("I can't play your song because you're not in a voice channel!");
+            throw new CommandException("I can't play your song because you're not in a voice channel!");
 
         // Make sure the user is in the same channel
         if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
-            throw new CommandError("I can't play your song because you're not in the same voice channel as me.");
+            throw new CommandException("I can't play your song because you're not in the same voice channel as me.");
 
         // Make sure the bot is playing
         if (audioManager.getAudioGuild(context.getGuild()).player.isPaused())
-            throw new CommandError("I can't skip because I'm currently paused!");
+            throw new CommandException("I can't skip because I'm currently paused!");
 
         // Skip the song
         audioManager.getAudioGuild(context.getGuild()).skip();
@@ -190,18 +190,18 @@ public class MusicCog extends Cog {
      * Clears the queue and stops the current songs playback
      */
     @Command(name = "clear")
-    public void commandClear(Context context) throws CommandError {
+    public void commandClear(Context context) throws CommandException {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandError("I can't clear the queue because I'm not currently in a voice channel!");
+            throw new CommandException("I can't clear the queue because I'm not currently in a voice channel!");
 
         // Next make sure the user is in a voice channel
         if (!audioManager.userInVoice(context.getAuthor()))
-            throw new CommandError("You can't clear the queue because you're not in a voice channel!");
+            throw new CommandException("You can't clear the queue because you're not in a voice channel!");
 
         // Make sure the user and bot are in the same channel
         if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
-            throw new CommandError("I can't clear the queue because you're not in the same voice channel as me.");
+            throw new CommandException("I can't clear the queue because you're not in the same voice channel as me.");
 
         // Clear!!
         audioManager.getAudioGuild(context.getGuild()).clear();
@@ -217,18 +217,18 @@ public class MusicCog extends Cog {
      * Gets or Sets the volume
      */
     @Command(name = "volume", aliases = {"v"})
-    public void commandVolume(Context context) throws CommandError, ArgumentError {
+    public void commandVolume(Context context) throws CommandException, ArgumentError {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandError("I can't clear the queue because I'm not currently in a voice channel!");
+            throw new CommandException("I can't clear the queue because I'm not currently in a voice channel!");
 
         // Next make sure the user is in a voice channel
         if (!audioManager.userInVoice(context.getAuthor()))
-            throw new CommandError("You can't clear the queue because you're not in a voice channel!");
+            throw new CommandException("You can't clear the queue because you're not in a voice channel!");
 
         // Make sure the user and bot are in the same channel
         if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
-            throw new CommandError("I can't clear the queue because you're not in the same voice channel as me.");
+            throw new CommandException("I can't clear the queue because you're not in the same voice channel as me.");
 
         // Get the audio guild
         AudioGuild audioGuild = audioManager.getAudioGuild(context.getGuild());
@@ -259,15 +259,15 @@ public class MusicCog extends Cog {
      * Gets the current playing song
      */
     @Command(name = "nowplaying", aliases = {"np"})
-    public void commandNowPlaying(Context context) throws CommandError {
+    public void commandNowPlaying(Context context) throws CommandException {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandError("I can't clear the queue because I'm not currently in a voice channel!");
+            throw new CommandException("I can't clear the queue because I'm not currently in a voice channel!");
 
         // Make sure the bot is playing
         AudioTrack audioTrack = audioManager.getAudioGuild(context.getGuild()).getNowPlaying();
         if (audioTrack == null)
-            throw new CommandError("I'm currently not playing anything!");
+            throw new CommandException("I'm currently not playing anything!");
 
         // Send the embed
         String duration = String.format(
@@ -331,10 +331,5 @@ public class MusicCog extends Cog {
         // Check the bot isn't the only one in the channel
         if (event.getChannelLeft().getMembers().size() == 1)
             audioManager.checkIfAlone(event.getChannelLeft());
-    }
-
-    @Override
-    public void onError(Context context, Exception error) {
-        ErrorPreset.onError(context, error);
     }
 }
