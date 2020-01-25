@@ -252,7 +252,7 @@ public class MusicCog extends Cog {
         audioGuild.setVolume(volume);
 
         // Send a message
-        context.send("\uD83C\uDFA7 The volume has been set to " + audioGuild.getVolume() + "%");
+        context.send("\uD83C\uDFA7 The volume has been set to " + volume + "%");
     }
 
     /**
