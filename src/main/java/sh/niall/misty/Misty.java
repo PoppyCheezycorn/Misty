@@ -45,7 +45,8 @@ public class Misty {
                 new HelpCog(),
                 new FunCog(),
                 new MusicCog(audioManager),
-                new UtilitiesCog()
+                new UtilitiesCog(),
+                new ModerationCog()
         );
 
         // Build JDA
