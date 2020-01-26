@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class MistyErrorHandler extends ErrorHandler {
 
     @Override
-    public void onError(Context ctx, Exception error) {
+    public void onError(Context ctx, Throwable error) {
         EmbedBuilder embedBuilder = generateBaseEmbed();
         embedBuilder.setAuthor(ctx.getAuthor().getEffectiveName(), null, ctx.getUser().getEffectiveAvatarUrl());
 
@@ -25,6 +25,7 @@ public class MistyErrorHandler extends ErrorHandler {
 
         embedBuilder.addField("Bot Error", "I don't know how to handle this error! Please inform my developer!", false);
         ctx.send(embedBuilder.build());
+        error.printStackTrace();
     }
 
     private static EmbedBuilder generateBaseEmbed() {

@@ -2,7 +2,6 @@ package sh.niall.misty.cogs;
 
 import net.dv8tion.jda.api.entities.User;
 import sh.niall.misty.utils.errors.ArgumentError;
-import sh.niall.misty.utils.presets.ErrorPreset;
 import sh.niall.yui.cogs.Cog;
 import sh.niall.yui.commands.Context;
 import sh.niall.yui.commands.interfaces.Command;

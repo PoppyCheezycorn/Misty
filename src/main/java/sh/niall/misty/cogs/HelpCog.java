@@ -1,7 +1,6 @@
 package sh.niall.misty.cogs;
 
 import sh.niall.misty.utils.errors.ArgumentError;
-import sh.niall.misty.utils.presets.ErrorPreset;
 import sh.niall.yui.cogs.Cog;
 import sh.niall.yui.commands.Context;
 import sh.niall.yui.commands.interfaces.Command;
