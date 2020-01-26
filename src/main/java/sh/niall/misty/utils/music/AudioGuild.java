@@ -27,6 +27,7 @@ public class AudioGuild extends AudioEventAdapter {
 
     // Config
     private int volume = 100;
+    private boolean loop = false;
 
     public AudioGuild(MongoCollection<Document> mongoCollection, Guild guild, AudioPlayerManager audioPlayerManager) {
         // JDA and Database
@@ -98,10 +99,24 @@ public class AudioGuild extends AudioEventAdapter {
         updateDocument(new Document("$set", new Document("volume", volume)));
     }
 
+    public boolean isLooping() {
+        return loop;
+    }
+
+    public void setLoop(boolean loop) {
+        this.loop = loop;
+    }
+
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if (endReason.mayStartNext)
-            play();
+        if (endReason.mayStartNext) {
+            if (!loop) {
+                play();
+            } else {
+                player.setVolume(this.volume);
+                player.playTrack(track);
+            }
+        }
     }
 
     public String getTextChannelID() {

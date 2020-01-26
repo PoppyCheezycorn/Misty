@@ -220,15 +220,15 @@ public class MusicCog extends Cog {
     public void commandVolume(Context context) throws CommandException, ArgumentError {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandException("I can't clear the queue because I'm not currently in a voice channel!");
+            throw new CommandException("I can't display the volume because I'm not currently in a voice channel!");
 
         // Next make sure the user is in a voice channel
         if (!audioManager.userInVoice(context.getAuthor()))
-            throw new CommandException("You can't clear the queue because you're not in a voice channel!");
+            throw new CommandException("You can't request the volume because you're not in a voice channel!");
 
         // Make sure the user and bot are in the same channel
         if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
-            throw new CommandException("I can't clear the queue because you're not in the same voice channel as me.");
+            throw new CommandException("I can't request the volume because you're not in the same voice channel as me.");
 
         // Get the audio guild
         AudioGuild audioGuild = audioManager.getAudioGuild(context.getGuild());
@@ -262,7 +262,7 @@ public class MusicCog extends Cog {
     public void commandNowPlaying(Context context) throws CommandException {
         // First make sure the bot is connected
         if (!context.getGuild().getAudioManager().isConnected())
-            throw new CommandException("I can't clear the queue because I'm not currently in a voice channel!");
+            throw new CommandException("I can't display what I'm playing because I'm not currently in a voice channel!");
 
         // Make sure the bot is playing
         AudioTrack audioTrack = audioManager.getAudioGuild(context.getGuild()).getNowPlaying();
@@ -285,6 +285,36 @@ public class MusicCog extends Cog {
         embedBuilder.addField("Duration:", duration, false);
         embedBuilder.addField("Volume:", audioManager.getAudioGuild(context.getGuild()).getVolume() + "%", true);
         context.send(embedBuilder.build());
+    }
+
+    /**
+     * Enables/Disables Looping
+     */
+    @Command(name = "loop")
+    public void commandLooping(Context context) throws CommandException {
+        // First make sure the bot is connected
+        if (!context.getGuild().getAudioManager().isConnected())
+            throw new CommandException("I can't change edit the player because I'm not currently in a voice channel!");
+
+        // Next make sure the user is in a voice channel
+        if (!audioManager.userInVoice(context.getAuthor()))
+            throw new CommandException("You can't request looping because you're not in a voice channel!");
+
+        // Make sure the user and bot are in the same channel
+        if (!audioManager.userInSameChannel(context.getGuild(), context.getAuthor()))
+            throw new CommandException("I can't edit the looping status because you're not in the same voice channel as me.");
+
+        // Get the audio guild
+        AudioGuild audioGuild = audioManager.getAudioGuild(context.getGuild());
+
+        // Set the looping
+        audioGuild.setLoop(!audioGuild.isLooping());
+
+        // Send the message
+        if (audioGuild.isLooping())
+            context.send("\uD83D\uDD01 Looping!");
+        else
+            context.send("❌ No longer looping!");
     }
 
     /**
